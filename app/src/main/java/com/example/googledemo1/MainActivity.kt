@@ -5,14 +5,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,12 +20,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MaterialTheme {
-                // Set Surface for top-level composable
-                Surface(color = Color.White, modifier = Modifier.fillMaxSize()) {
-                    MyApp()
-                }
-            }
+            MyApp()
         }
     }
 }
@@ -36,37 +28,32 @@ class MainActivity : ComponentActivity() {
 // Event list with static data
 val events = listOf(
     Event(
-        R.drawable.speaker1,
+        R.drawable.ic_jetpack_compose,
         "Bhoomi Vaghasiya",
         "Simplify Development with Compose",
-        "10:00 AM - 11:00 AM"
+        "10:15 AM - 11:00 AM"
     ),
     Event(
-        R.drawable.speaker1,
+        R.drawable.ic_chatgpt,
+        "Jay Thakkar",
+        "GEN AI and LLM",
+        "11:00 AM - 11:45 AM"
+    ),
+    Event(
+        R.drawable.ic_flutter,
         "Vivek Yadav",
         "Let's scale Flutter Web",
-        "11:00 AM - 12:00 PM"
-    ),
-    Event(
-        R.drawable.speaker1,
-        "Jay Thakkar",
-        "Machine Learning Basics",
-        "12:00 PM - 1:00 PM"
+        "11:45 AM - 12:30 PM"
     )
 )
 
-
-val organizers = listOf(
-    Organizer(R.drawable.speaker1, "Sanjay Ramani", "IJEENI"),
-    Organizer(R.drawable.speaker1, "Nikunj paradva", "Aanibrothers Infotech"),
-    Organizer(R.drawable.speaker1, "Mayur Sojitra", "Murait Technologies")
-)
 
 @Composable
 fun MyApp() {
 
     // State to keep track of the current displayed event
     val currentEventIndex = remember { mutableStateOf(0) }
+
     val colors = listOf(
         Color(0xFFD1E2F7), // Light pastel blue
         Color(0xFFF9D8D5), // Light pastel red
@@ -74,9 +61,9 @@ fun MyApp() {
     )
 
 
-    Column(modifier = Modifier
-        .padding(10.dp)
-        ) {
+    //Column to arrange UI element in horizontal manner
+    Column(modifier = Modifier.padding(10.dp)) {
+
         Image(
             painter = painterResource(id = R.drawable.google_io_banner),
             contentDescription = "Google IO"
@@ -84,23 +71,19 @@ fun MyApp() {
 
         Spacer(modifier = Modifier.padding(10.dp))
 
-
-        Text(text = "Speakers", style = MaterialTheme.typography.titleLarge)
+        Text(text = "Events", style = MaterialTheme.typography.titleLarge)
 
         Spacer(modifier = Modifier.padding(5.dp))
 
         Card(
             elevation = CardDefaults.cardElevation(8.dp),
             shape = RoundedCornerShape(16.dp),
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(colors[currentEventIndex.value % colors.size])
-
-
         ) {
+            //Box to arrange UI element in center
             Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
                 EventItem(events[currentEventIndex.value])
-
             }
         }
 
@@ -125,25 +108,15 @@ fun MyApp() {
             }
         }
 
-        Spacer(modifier = Modifier.padding(10.dp))
-
-        Text(text = "Organizers", style = MaterialTheme.typography.titleLarge)
-
-
-        Spacer(modifier = Modifier.padding(5.dp))
-        LazyColumn {
-            items(organizers.size) {
-                OrganizerItem(organizer = organizers[it])
-            }
-        }
     }
 
 }
 
 
+
+//Reusable composable
 @Composable
 fun EventItem(event: Event) {
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -152,9 +125,7 @@ fun EventItem(event: Event) {
         Image(
             painter = painterResource(id = event.speakerImage),
             contentDescription = event.speakerName,
-            modifier = Modifier
-                .size(120.dp)
-                .clip(RoundedCornerShape(8.dp))
+            modifier = Modifier.size(120.dp)
         )
 
         Spacer(modifier = Modifier.padding(4.dp))
@@ -174,64 +145,28 @@ fun EventItem(event: Event) {
 
         Text(
             text = event.time,
-            color = Color.Gray,
+            color = Color.DarkGray,
             style = MaterialTheme.typography.bodyMedium
         )
     }
 }
 
 
-/*
-@Preview(name = "Organizer Preview", showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun PreviewOgranizerItem() {
-    OrganizerItem(organizer = Organizer(R.drawable.speaker1, "Sanjay Ramani", "IJEENI"))
+fun PreviewMyApp() {
+    MyApp()
+}
+
+
+/*
+@Preview(showBackground = true)
+@Composable
+fun MyEventPreview() {
+    EventItem(event = Event(R.drawable.ic_chatgpt, "Name", "Topic", "time"))
 }
 */
 
-@Composable
-fun OrganizerItem(organizer: Organizer) {
-
-    Row(
-        modifier = Modifier.padding(0.dp, 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            painter = painterResource(id = organizer.organizerImage),
-            contentDescription = organizer.organizerName,
-            modifier = Modifier
-                .size(80.dp)
-                .clip(CircleShape)
-        )
-
-
-        Spacer(modifier = Modifier.padding(10.dp))
-        Column(verticalArrangement = Arrangement.Center) {
-            Text(
-                text = organizer.organizerName,
-                color = Color.Black,
-                style = MaterialTheme.typography.titleMedium
-            )
-
-            Text(
-                text = organizer.companyName,
-                color = Color.Black,
-                style = MaterialTheme.typography.bodyLarge
-            )
-
-        }
-
-    }
-}
-
-
-@Preview(name = "Main Preview")
-@Composable
-fun PreviewMyApp() {
-    Surface(color = Color.White, modifier = Modifier.fillMaxSize()) {
-        MyApp()
-    }
-}
 
 // Data class to represent event item data
 data class Event(
@@ -239,12 +174,5 @@ data class Event(
     val speakerName: String,
     val topicName: String,
     val time: String
-)
-
-
-data class Organizer(
-    val organizerImage: Int,
-    val organizerName: String,
-    val companyName: String,
 )
 
